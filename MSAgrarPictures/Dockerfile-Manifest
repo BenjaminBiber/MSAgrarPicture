@@ -16,8 +16,8 @@ COPY MSAgrarPictures/package.json ./
 RUN npm install
 
 # Kopiere alle Manifest-Dateien
-COPY MSAgrarPictures/manifest ./
-COPY MSAgrarPictures/.manifest ./
+COPY MSAgrarPictures/manifest /app/manifest
+COPY MSAgrarPictures/.manifest /app/.manifest
 COPY MSAgrarPictures/manifest.yml ./
 
 # Standard EntryPoint: npm run manifest
