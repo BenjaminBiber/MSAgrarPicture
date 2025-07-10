@@ -10,15 +10,15 @@ RUN apk add --no-cache python3 make g++
 WORKDIR /app
 
 # Kopiere package.json und (optional) package-lock.json
-COPY package*.json ./
+COPY MSAgrarPictures/package.json ./
 
 # Installiere npm dependencies
 RUN npm install
 
 # Kopiere alle Manifest-Dateien
-COPY manifest ./
-COPY .manifest ./
-COPY manifest.yml ./
+COPY MSAgrarPictures/manifest ./
+COPY MSAgrarPictures/.manifest ./
+COPY MSAgrarPictures/manifest.yml ./
 
 # Standard EntryPoint: npm run manifest
 CMD ["npm", "run", "manifest"]
