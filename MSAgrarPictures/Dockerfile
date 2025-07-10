@@ -8,10 +8,11 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 
 # Install Node.js
-RUN curl -fsSL https://deb.nodesource.com/setup_14.x | bash - \
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
     && apt-get install -y \
         nodejs \
     && rm -rf /var/lib/apt/lists/*
+RUN npm install
 
 WORKDIR /src
 COPY ["MSAgrarPictures/MSAgrarPictures.csproj", "MSAgrarPictures/"]
