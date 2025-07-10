@@ -19,7 +19,6 @@ RUN npm install
 COPY manifest ./
 COPY .manifest ./
 COPY manifest.yml ./
-COPY .env ./
 
 # Standard EntryPoint: npm run manifest
 CMD ["npm", "run", "manifest"]
