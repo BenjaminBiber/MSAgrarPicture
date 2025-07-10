@@ -1,0 +1,112 @@
+@import "vars.less";
+
+html {
+  scroll-behavior: smooth;
+  background: @color1;
+}
+
+body{
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  background: @color1;
+}
+
+.Primary_Txt{
+  color: @primary-Text;
+  font-family: "Karantina", system-ui;
+  font-weight: 400;
+  font-style: normal;
+  padding-bottom: 0.15em;
+}
+
+.ATag{
+  text-decoration: none;
+}
+
+.hover_Normal {
+  transition: all 0.3s ease-in-out;
+}
+
+.hover_Normal:hover{
+  transform: scale(1.1);
+  color: @color2;
+  @hamburger-color: @color2;
+}
+
+
+.UnderlineHover {
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 4px;
+    border-radius: 4px;
+    background: linear-gradient(to right, #f4f4f4, #ebebf3, #dee4f3, #ceddf2, #bbd7f0, #aad0ed, #98c9ea, #84c3e7, #70b9e4, #5bafe2, #43a5df, #229bdd);
+    bottom: -5%;
+    left: 0;
+    transform-origin: right;
+    transform: scaleX(0);
+    transition: transform .3s ease-in-out;
+  }
+
+  &:hover::before {
+    transform-origin: left;
+    transform: scaleX(1);
+  }
+
+}
+
+.test{
+  background-color: red;
+}
+
+.button{
+  background-color: @color2;
+  color: @primary-Text;
+  aspect-ratio: 3.28 / 1;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  p {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+.button:hover {
+  background-color: darken(@color2, 10%);
+}
+
+.button_OutLnd{
+  background: transparent;
+  border: 3px solid @color2;
+  color: @primary-Text;
+  aspect-ratio: 3.28 / 1;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.Button_Text{
+  font-size: 2em;
+  margin: 0;
+}
+
+.aos{
+  animation: aos_appear linear;
+  animation-timeline: view();
+  animation-range: entry 0 cover 40%;
+}
+@keyframes aos_appear{
+  from{
+    opacity: 0;
+    scale: 0.5;
+  }
+  to{
+    opacity: 1;
+    scale: 1;
+  }
+}
+  

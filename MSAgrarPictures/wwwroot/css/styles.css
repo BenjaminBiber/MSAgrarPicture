@@ -1,0 +1,265 @@
+html {
+  scroll-behavior: smooth;
+  background: #222127;
+}
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  background: #222127;
+}
+.Primary_Txt {
+  color: #f4f4f4;
+  font-family: "Karantina", system-ui;
+  font-weight: 400;
+  font-style: normal;
+  padding-bottom: 0.15em;
+}
+.ATag {
+  text-decoration: none;
+}
+.hover_Normal {
+  transition: all 0.3s ease-in-out;
+}
+.hover_Normal:hover {
+  transform: scale(1.1);
+  color: #0DB498;
+}
+.UnderlineHover {
+  position: relative;
+}
+.UnderlineHover::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 4px;
+  border-radius: 4px;
+  background: linear-gradient(to right, #f4f4f4, #ebebf3, #dee4f3, #ceddf2, #bbd7f0, #aad0ed, #98c9ea, #84c3e7, #70b9e4, #5bafe2, #43a5df, #229bdd);
+  bottom: -5%;
+  left: 0;
+  transform-origin: right;
+  transform: scaleX(0);
+  transition: transform 0.3s ease-in-out;
+}
+.UnderlineHover:hover::before {
+  transform-origin: left;
+  transform: scaleX(1);
+}
+.test {
+  background-color: red;
+}
+.button {
+  background-color: #0DB498;
+  color: #f4f4f4;
+  aspect-ratio: 3.28;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.button p {
+  margin: 0;
+  padding: 0;
+}
+.button:hover {
+  background-color: #0a8470;
+}
+.button_OutLnd {
+  background: transparent;
+  border: 3px solid #0DB498;
+  color: #f4f4f4;
+  aspect-ratio: 3.28;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.Button_Text {
+  font-size: 2em;
+  margin: 0;
+}
+.aos {
+  animation: aos_appear linear;
+  animation-timeline: view();
+  animation-range: entry 0 cover 40%;
+}
+@keyframes aos_appear {
+  from {
+    opacity: 0;
+    scale: 0.5;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}
+.polaroid-link {
+  text-decoration: none;
+}
+.polaroid-link:hover .polaroid {
+  transform: scale(1.05);
+}
+.polaroid-link .polaroid {
+  transition: all 0.3s ease-in-out;
+  background: white;
+  display: flex;
+  justify-content: flex-start;
+  padding-top: 1em;
+  align-items: center;
+  flex-direction: column;
+  aspect-ratio: 0.83333333;
+  position: relative;
+  border-radius: 0.25em;
+  cursor: pointer;
+}
+.polaroid-link .polaroid .polaroid-img {
+  width: 85%;
+  border-radius: 0.25em;
+  aspect-ratio: 1;
+  object-fit: cover;
+}
+.polaroid-link .polaroid .polaroid-txt {
+  color: #222127;
+  font-size: 1.5rem;
+  text-align: center;
+  margin: 0;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+.polaroid-link .polaroid::after,
+.polaroid-link .polaroid::before {
+  content: "";
+  position: absolute;
+  background: #464450;
+  width: 4.5rem;
+  aspect-ratio: 1;
+  rotate: 45deg;
+  box-shadow: 1.25rem 0rem 1rem -1.25rem rgb(0 0 0);
+}
+.polaroid-link .polaroid::after {
+  bottom: -3.25rem;
+  right: -3.25rem;
+  rotate: 225deg;
+}
+.polaroid-link .polaroid::before {
+  left: -3.25rem;
+  top: -3.25rem;
+}
+.polaroid-dialog-background {
+  width: 100vw;
+  height: 100dvh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  background: rgba(85, 85, 85, 0.9);
+  transition: all 0.3s ease-in-out;
+  opacity: 1;
+  left: 0;
+  top: 0;
+  z-index: 9999;
+}
+.polaroid-dialog-background.hide {
+  opacity: 0  !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+}
+.polaroid-dialog-background .close_icon {
+  position: fixed;
+  right: 2em;
+  top: 2em;
+  border: 2px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5em;
+  border-radius: 50%;
+  transition: all 0.3s ease-in-out;
+}
+.polaroid-dialog-background .close_icon svg path {
+  fill: white;
+}
+.polaroid-dialog-background .close_icon:hover {
+  border-color: #0DB498;
+}
+.polaroid-dialog-background .close_icon:hover svg path {
+  fill: #0DB498;
+}
+.polaroid-dialog-background .polaroid-dialog {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.polaroid-dialog-background .polaroid-dialog img {
+  width: 80vw;
+  height: 80dvh;
+  object-fit: contain;
+}
+:host {
+  display: flex;
+}
+.impressum-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: #464450;
+  align-items: center;
+  width: 100vw;
+  min-height: calc(100dvh - 10em);
+}
+.impressum-wrapper .impressum-text,
+.impressum-wrapper h1 {
+  margin: 0;
+}
+.impressum-wrapper .contact {
+  margin-bottom: 2em;
+}
+.impressum-wrapper p.last-text {
+  margin-bottom: 2em;
+}
+.impressum-wrapper .header {
+  font-size: 2.5rem;
+  margin-bottom: 1em;
+}
+.impressum-wrapper h1 {
+  font-size: 2em;
+}
+.impressum-wrapper .impressum-text {
+  font-size: 1.25em;
+  font-weight: 400;
+  letter-spacing: 1px;
+  margin-bottom: 0.5em;
+  width: 100%;
+  text-align: center;
+}
+.impressum-wrapper a {
+  color: white;
+}
+@media (max-width: 1200px) {
+  .impressum-wrapper .impressum-text {
+    width: 80%;
+  }
+}
+@media (max-width: 468px) {
+  .impressum-wrapper .contact_button {
+    height: 2em;
+    width: 6em !important;
+  }
+  .impressum-wrapper .contact_button p {
+    font-size: 1.5em;
+  }
+  .impressum-wrapper .contact {
+    margin-bottom: 0.5em;
+  }
+  .impressum-wrapper p.last-text {
+    margin-bottom: 0.5em;
+  }
+  .impressum-wrapper .header {
+    margin-bottom: 0.25em;
+  }
+  .impressum-wrapper h1 {
+    font-size: 1.5em;
+  }
+  .impressum-wrapper .impressum-text {
+    font-size: 1em;
+  }
+}

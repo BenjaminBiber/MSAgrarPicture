@@ -1,0 +1,25 @@
+# Verwende Node 18 mit Alpine als Basis (liefert Node v18 + npm vorinstalliert)
+FROM node:18-alpine
+
+EXPOSE 1111
+
+# Installiere Build Tools für native Module
+RUN apk add --no-cache python3 make g++
+
+# Setze Arbeitsverzeichnis
+WORKDIR /app
+
+# Kopiere package.json und (optional) package-lock.json
+COPY package*.json ./
+
+# Installiere npm dependencies
+RUN npm install
+
+# Kopiere alle Manifest-Dateien
+COPY manifest ./
+COPY .manifest ./
+COPY manifest.yml ./
+COPY .env ./
+
+# Standard EntryPoint: npm run manifest
+CMD ["npm", "run", "manifest"]

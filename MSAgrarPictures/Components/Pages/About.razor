@@ -1,0 +1,44 @@
+@page "/Über-Mich"
+@using MSAgrarPictures.Components.Components
+@using MSLib.Models
+@using MSLib.Services
+@inject CmsService CmsService
+
+<PageTitle>Über Mich</PageTitle>
+
+<head>
+    <link rel="stylesheet" href="css/about.css"/>
+</head>
+
+<div class="about-wrapper">
+    <h1 class="header Primary_Txt">@_about.Ueberschrift</h1>
+    <div class="content-wrapper">
+        <div class="pic">
+            <Polaroid Image="Bilder" Album="null"></Polaroid>
+        </div>
+        <div class="Text">
+            <div>
+                <h1 class="Primary_Txt">@_about.TeilUeberschrift</h1>
+                <p class="Primary_Txt">@_about.TeilText</p>
+            </div>
+            <div>
+                <h1 class="Primary_Txt">@_about.TeilUeberschrift2</h1>
+                <p class="Primary_Txt">@_about.TeilText2</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    private MSLib.Models.About _about = new MSLib.Models.About();
+    private Bilder Bilder = new Bilder();
+    
+    protected override async Task OnInitializedAsync()
+    {   
+        _about = await CmsService.GetAboutAsync();
+        Bilder.Bild = _about.IchBild;
+        Bilder.Bildunterschrift = "Max Schmalbach";
+    }
+
+}

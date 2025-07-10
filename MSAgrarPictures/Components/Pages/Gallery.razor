@@ -1,0 +1,61 @@
+@page "/Galerie/{galerieName}"
+@page "/Galerie"
+@using MSLib.Models
+@using MSLib.Services
+@using MSAgrarPictures.Components.Components
+@inject CmsService CmsService
+
+<head>
+    <link rel="stylesheet" href="css/gallery.css"/>
+</head>
+
+<div class="gallery-wrapper">
+    @if (IsAlbum)
+    {
+        <a href="/Galerie" class="back-to-gallery hover_Normal">
+            <p class="Primary_Txt">zurück zur Galerie</p>
+            <div id="arrow_to_bottom">
+                <img alt="Icon zum Zurückgehen" src="/arrow_dwn.svg"/>
+            </div>
+        </a>
+    }
+    
+    <h1 class="Primary_Txt">@GalerieSeite.Überschrift</h1>
+    @if (!IsAlbum)
+    {
+        <div class="polaroid-wrapper">
+            @foreach (var galerie in Albums)
+            {
+                <Polaroid Album="galerie"></Polaroid>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="polaroid-wrapper">
+            @foreach (var image in Albums.Where(x => x.Name == galerieName).SelectMany(x => x.Bilders))
+            {
+                <Polaroid Image="image"></Polaroid>
+            }
+        </div>
+    }
+</div>
+
+@code {
+
+    private List<Album> Albums { get; set; } = new List<Album>();
+    private GalerieSeite GalerieSeite { get; set; } = new GalerieSeite();
+    
+    [Parameter]
+    public string galerieName { get; set; }
+    private bool IsAlbum => !string.IsNullOrEmpty(galerieName);
+    
+    protected override async Task OnInitializedAsync()
+    {
+        Albums = await CmsService.GetAlbumsAsync();
+        GalerieSeite = await CmsService.GetGaleryAsync();
+        var test = galerieName;
+        var g = IsAlbum;
+    }
+
+}

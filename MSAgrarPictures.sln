@@ -1,0 +1,27 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MSAgrarPictures", "MSAgrarPictures\MSAgrarPictures.csproj", "{D6A10FF5-5335-4F41-85CD-645891397285}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MSLib", "MSLib\MSLib.csproj", "{FBF80D9B-DEAB-4DA8-BD51-7C72F439E9CA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EC6D75CD-BB3A-46B0-85E1-8E0D5CD75E7A}"
+	ProjectSection(SolutionItems) = preProject
+		compose.yaml = compose.yaml
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D6A10FF5-5335-4F41-85CD-645891397285}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6A10FF5-5335-4F41-85CD-645891397285}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6A10FF5-5335-4F41-85CD-645891397285}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6A10FF5-5335-4F41-85CD-645891397285}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FBF80D9B-DEAB-4DA8-BD51-7C72F439E9CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBF80D9B-DEAB-4DA8-BD51-7C72F439E9CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FBF80D9B-DEAB-4DA8-BD51-7C72F439E9CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FBF80D9B-DEAB-4DA8-BD51-7C72F439E9CA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

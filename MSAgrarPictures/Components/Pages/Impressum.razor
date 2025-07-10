@@ -1,0 +1,51 @@
+@page "/Impressum"
+@using MSLib.Models
+@using MSLib.Services
+@inject CmsService CmsService
+@using Microsoft.AspNetCore.Components
+
+<div class="impressum-wrapper">
+    <h1 class="Primary_Txt header">@_impressumSite.Überschrift</h1>
+    @foreach(var text in _impressumsTexts.Data.OrderBy(x => x.Sortierreihenfolge).Take(_impressumsTexts.Data.Count / 2))
+    {
+        if (text.IstÜberschrift)
+        {
+            <h1 class="Primary_Txt">@((MarkupString)text.Text)</h1>
+        }
+        else
+        {
+            <p class="Primary_Txt impressum-text">@((MarkupString)text.Text)</p>
+        }
+    }
+
+    <a class="contact" href="mailto:info@ms-agrarpicture.de">
+        <button style="width: 12em; margin: 1em;" class="button contact_button hover_Normal">
+            <p class="Primary_Txt Button_Text">Kontakt</p>
+        </button>
+    </a>
+    
+    @foreach(var text in _impressumsTexts.Data.OrderBy(x => x.Sortierreihenfolge).TakeLast(_impressumsTexts.Data.Count / 2))
+    {
+        if (text.IstÜberschrift)
+        {
+            <h1 class="Primary_Txt">@((MarkupString)text.Text)</h1>
+        }
+        else
+        {
+            <p class="Primary_Txt impressum-text">@((MarkupString)text.Text)</p>
+        }
+    }
+</div>
+
+@code{
+
+    private ImpressumsTexts _impressumsTexts = new ImpressumsTexts();
+    private ImpressumSite _impressumSite = new ImpressumSite();
+    
+    protected override async Task OnInitializedAsync()
+    {
+        _impressumsTexts = await CmsService.GetImpressumAsync();
+        _impressumSite = await CmsService.GetImpressumSiteAsync();
+    }
+
+}

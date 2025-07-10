@@ -1,0 +1,6 @@
+﻿rvices:
+  msagrarpictures:
+    image: msagrarpictures
+    build:
+      context: .
+      dockerfile: MSAgrarPictures/Dockerfile

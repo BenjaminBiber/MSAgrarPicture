@@ -1,0 +1,2642 @@
+openapi: 3.1.0
+info:
+  title: Max Schmalbach
+  version: 0.0.1
+servers:
+  - url: http://localhost:1111/api
+    description: Development server
+paths:
+  /collections/albums:
+    post:
+      summary: Create a new album
+      description: Creates a new album passing the properties in the request body as JSON.
+      tags:
+        - Albums
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUpdateAlbumDto'
+      security:
+        - Admin: []
+          User: []
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Album'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Validation failed
+                  error:
+                    type: string
+                    example: Bad Request
+                  statusCode:
+                    type: integer
+                    example: 400
+    get:
+      summary: List albums
+      description: >-
+        Retrieves a paginated list of albums. In addition to the general
+        parameters below, each property of the album can be used as a filter:
+        https://manifest.build/docs/crud#get-a-list-of-items
+      tags:
+        - Albums
+      security: []
+      parameters:
+        - name: page
+          in: query
+          description: The page number
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: perPage
+          in: query
+          description: The number of items per page
+          required: false
+          schema:
+            type: integer
+            default: 10
+        - name: orderBy
+          in: query
+          description: The field to order by
+          required: false
+          schema:
+            type: string
+            enum:
+              - Name
+              - Cover-Bild
+            default: createdAt
+        - name: order
+          in: query
+          description: The order direction
+          required: false
+          schema:
+            type: string
+            enum:
+              - ASC
+              - DESC
+            default: DESC
+        - name: relations
+          in: query
+          description: >-
+            The relations to include. For several relations, use a
+            comma-separated list
+          required: false
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - bilders
+                - bilders
+        - name: Name_eq
+          in: query
+          description: Get albums where Name equals the specified value
+          required: false
+          schema:
+            type: string
+        - name: Name_neq
+          in: query
+          description: Get albums where Name does not equal the specified value
+          required: false
+          schema:
+            type: string
+        - name: Name_like
+          in: query
+          description: >-
+            Get albums where Name contains or matches the specified pattern (use
+            % for wildcards)
+          required: false
+          schema:
+            type: string
+        - name: Name_in
+          in: query
+          description: >-
+            Get albums where Name is one of the specified values
+            (comma-separated)
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Paginator'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Album'
+  /collections/albums/{id}:
+    get:
+      summary: Get a single album
+      description: Retrieves the details of a single album by its ID.
+      tags:
+        - Albums
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the album
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 123e4567-e89b-12d3-a456-426614174000
+        - name: relations
+          in: query
+          description: >-
+            The relations to include. For several relations, use a
+            comma-separated list
+          required: false
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - bilders
+                - bilders
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Album'
+        '404':
+          description: The album was not found
+    put:
+      summary: Update an existing album (full replace)
+      description: >-
+        Updates a single album by its ID. The properties to update are passed in
+        the request body as JSON. This operation fully replaces the entity and
+        its relations. Leaving a property out will remove it.
+      tags:
+        - Albums
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUpdateAlbumDto'
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the album
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 123e4567-e89b-12d3-a456-426614174000
+      security:
+        - Admin: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Album'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Item not Found
+                  error:
+                    type: string
+                    example: Not Found
+                  statusCode:
+                    type: integer
+                    example: 404
+    patch:
+      summary: Update an existing album (partial update)
+      description: >-
+        Updates a single album by its ID. The properties to update are passed in
+        the request body as JSON. This operation partially updates the entity
+        and its relations. Leaving a property out will not remove it.
+      tags:
+        - Albums
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUpdateAlbumDto'
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the album
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 123e4567-e89b-12d3-a456-426614174000
+      security:
+        - Admin: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Album'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Item not Found
+                  error:
+                    type: string
+                    example: Not Found
+                  statusCode:
+                    type: integer
+                    example: 404
+    delete:
+      summary: Delete an existing album
+      description: Deletes a single album by its ID.
+      tags:
+        - Albums
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the album
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 123e4567-e89b-12d3-a456-426614174000
+      security:
+        - Admin: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Album'
+        '404':
+          description: The album was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Not Found
+                  error:
+                    type: string
+                    example: Not Found
+                  statusCode:
+                    type: integer
+                    example: 404
+  /collections/albums/select-options:
+    get:
+      summary: List albums for select options (admin panel)
+      description: >-
+        Retrieves a list of albums for select options. The response is an array
+        of objects with the properties 'id' and 'label'. Used in the admin panel
+        to fill select dropdowns.
+      tags:
+        - Albums
+      security:
+        - Admin: []
+      responses:
+        '200':
+          description: List of albums for select options
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SelectOption'
+  /collections/bilders:
+    post:
+      summary: Create a new bilder
+      description: Creates a new bilder passing the properties in the request body as JSON.
+      tags:
+        - Bilders
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUpdateBilderDto'
+      security:
+        - Admin: []
+          User: []
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bilder'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Validation failed
+                  error:
+                    type: string
+                    example: Bad Request
+                  statusCode:
+                    type: integer
+                    example: 400
+    get:
+      summary: List bilders
+      description: >-
+        Retrieves a paginated list of bilders. In addition to the general
+        parameters below, each property of the bilder can be used as a filter:
+        https://manifest.build/docs/crud#get-a-list-of-items
+      tags:
+        - Bilders
+      security: []
+      parameters:
+        - name: page
+          in: query
+          description: The page number
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: perPage
+          in: query
+          description: The number of items per page
+          required: false
+          schema:
+            type: integer
+            default: 10
+        - name: orderBy
+          in: query
+          description: The field to order by
+          required: false
+          schema:
+            type: string
+            enum:
+              - Bild
+              - Bildunterschrift
+              - IstTopBild
+            default: createdAt
+        - name: order
+          in: query
+          description: The order direction
+          required: false
+          schema:
+            type: string
+            enum:
+              - ASC
+              - DESC
+            default: DESC
+        - name: relations
+          in: query
+          description: >-
+            The relations to include. For several relations, use a
+            comma-separated list
+          required: false
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - album
+                - albums
+        - name: Bildunterschrift_eq
+          in: query
+          description: Get bilders where Bildunterschrift equals the specified value
+          required: false
+          schema:
+            type: string
+        - name: Bildunterschrift_neq
+          in: query
+          description: >-
+            Get bilders where Bildunterschrift does not equal the specified
+            value
+          required: false
+          schema:
+            type: string
+        - name: Bildunterschrift_like
+          in: query
+          description: >-
+            Get bilders where Bildunterschrift contains or matches the specified
+            pattern (use % for wildcards)
+          required: false
+          schema:
+            type: string
+        - name: Bildunterschrift_in
+          in: query
+          description: >-
+            Get bilders where Bildunterschrift is one of the specified values
+            (comma-separated)
+          required: false
+          schema:
+            type: string
+        - name: IstTopBild_eq
+          in: query
+          description: Get bilders where IstTopBild equals the specified value
+          required: false
+          schema:
+            type: boolean
+        - name: IstTopBild_neq
+          in: query
+          description: Get bilders where IstTopBild does not equal the specified value
+          required: false
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Paginator'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Bilder'
+  /collections/bilders/{id}:
+    get:
+      summary: Get a single bilder
+      description: Retrieves the details of a single bilder by its ID.
+      tags:
+        - Bilders
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the bilder
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 123e4567-e89b-12d3-a456-426614174000
+        - name: relations
+          in: query
+          description: >-
+            The relations to include. For several relations, use a
+            comma-separated list
+          required: false
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - album
+                - albums
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bilder'
+        '404':
+          description: The bilder was not found
+    put:
+      summary: Update an existing bilder (full replace)
+      description: >-
+        Updates a single bilder by its ID. The properties to update are passed
+        in the request body as JSON. This operation fully replaces the entity
+        and its relations. Leaving a property out will remove it.
+      tags:
+        - Bilders
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUpdateBilderDto'
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the bilder
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 123e4567-e89b-12d3-a456-426614174000
+      security:
+        - Admin: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bilder'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Item not Found
+                  error:
+                    type: string
+                    example: Not Found
+                  statusCode:
+                    type: integer
+                    example: 404
+    patch:
+      summary: Update an existing bilder (partial update)
+      description: >-
+        Updates a single bilder by its ID. The properties to update are passed
+        in the request body as JSON. This operation partially updates the entity
+        and its relations. Leaving a property out will not remove it.
+      tags:
+        - Bilders
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUpdateBilderDto'
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the bilder
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 123e4567-e89b-12d3-a456-426614174000
+      security:
+        - Admin: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bilder'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Item not Found
+                  error:
+                    type: string
+                    example: Not Found
+                  statusCode:
+                    type: integer
+                    example: 404
+    delete:
+      summary: Delete an existing bilder
+      description: Deletes a single bilder by its ID.
+      tags:
+        - Bilders
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the bilder
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 123e4567-e89b-12d3-a456-426614174000
+      security:
+        - Admin: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bilder'
+        '404':
+          description: The bilder was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Not Found
+                  error:
+                    type: string
+                    example: Not Found
+                  statusCode:
+                    type: integer
+                    example: 404
+  /collections/bilders/select-options:
+    get:
+      summary: List bilders for select options (admin panel)
+      description: >-
+        Retrieves a list of bilders for select options. The response is an array
+        of objects with the properties 'id' and 'label'. Used in the admin panel
+        to fill select dropdowns.
+      tags:
+        - Bilders
+      security:
+        - Admin: []
+      responses:
+        '200':
+          description: List of bilders for select options
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SelectOption'
+  /collections/impressums-texts:
+    post:
+      summary: Create a new impressumstext
+      description: >-
+        Creates a new impressumstext passing the properties in the request body
+        as JSON.
+      tags:
+        - Impressumstexts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUpdateImpressumsTextDto'
+      security:
+        - Admin: []
+          User: []
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImpressumsText'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Validation failed
+                  error:
+                    type: string
+                    example: Bad Request
+                  statusCode:
+                    type: integer
+                    example: 400
+    get:
+      summary: List impressumstexts
+      description: >-
+        Retrieves a paginated list of impressumstexts. In addition to the
+        general parameters below, each property of the impressumstext can be
+        used as a filter: https://manifest.build/docs/crud#get-a-list-of-items
+      tags:
+        - Impressumstexts
+      security: []
+      parameters:
+        - name: page
+          in: query
+          description: The page number
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: perPage
+          in: query
+          description: The number of items per page
+          required: false
+          schema:
+            type: integer
+            default: 10
+        - name: orderBy
+          in: query
+          description: The field to order by
+          required: false
+          schema:
+            type: string
+            enum:
+              - Text
+              - Sortierreihenfolge
+              - IstÜberschrift
+            default: createdAt
+        - name: order
+          in: query
+          description: The order direction
+          required: false
+          schema:
+            type: string
+            enum:
+              - ASC
+              - DESC
+            default: DESC
+        - name: relations
+          in: query
+          description: >-
+            The relations to include. For several relations, use a
+            comma-separated list
+          required: false
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum: []
+        - name: Text_eq
+          in: query
+          description: Get impressumstexts where Text equals the specified value
+          required: false
+          schema:
+            type: string
+        - name: Text_neq
+          in: query
+          description: Get impressumstexts where Text does not equal the specified value
+          required: false
+          schema:
+            type: string
+        - name: Text_like
+          in: query
+          description: >-
+            Get impressumstexts where Text contains or matches the specified
+            pattern (use % for wildcards)
+          required: false
+          schema:
+            type: string
+        - name: Text_in
+          in: query
+          description: >-
+            Get impressumstexts where Text is one of the specified values
+            (comma-separated)
+          required: false
+          schema:
+            type: string
+        - name: Sortierreihenfolge_eq
+          in: query
+          description: >-
+            Get impressumstexts where Sortierreihenfolge equals the specified
+            value
+          required: false
+          schema:
+            type: number
+        - name: Sortierreihenfolge_neq
+          in: query
+          description: >-
+            Get impressumstexts where Sortierreihenfolge does not equal the
+            specified value
+          required: false
+          schema:
+            type: number
+        - name: Sortierreihenfolge_gt
+          in: query
+          description: >-
+            Get impressumstexts where Sortierreihenfolge is greater than the
+            specified value
+          required: false
+          schema:
+            type: number
+        - name: Sortierreihenfolge_gte
+          in: query
+          description: >-
+            Get impressumstexts where Sortierreihenfolge is greater than or
+            equal to the specified value
+          required: false
+          schema:
+            type: number
+        - name: Sortierreihenfolge_lt
+          in: query
+          description: >-
+            Get impressumstexts where Sortierreihenfolge is less than the
+            specified value
+          required: false
+          schema:
+            type: number
+        - name: Sortierreihenfolge_lte
+          in: query
+          description: >-
+            Get impressumstexts where Sortierreihenfolge is less than or equal
+            to the specified value
+          required: false
+          schema:
+            type: number
+        - name: Sortierreihenfolge_in
+          in: query
+          description: >-
+            Get impressumstexts where Sortierreihenfolge is one of the specified
+            values (comma-separated)
+          required: false
+          schema:
+            type: string
+        - name: IstÜberschrift_eq
+          in: query
+          description: Get impressumstexts where IstÜberschrift equals the specified value
+          required: false
+          schema:
+            type: boolean
+        - name: IstÜberschrift_neq
+          in: query
+          description: >-
+            Get impressumstexts where IstÜberschrift does not equal the
+            specified value
+          required: false
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Paginator'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/ImpressumsText'
+  /collections/impressums-texts/{id}:
+    get:
+      summary: Get a single impressumstext
+      description: Retrieves the details of a single impressumstext by its ID.
+      tags:
+        - Impressumstexts
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the impressumstext
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 123e4567-e89b-12d3-a456-426614174000
+        - name: relations
+          in: query
+          description: >-
+            The relations to include. For several relations, use a
+            comma-separated list
+          required: false
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum: []
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImpressumsText'
+        '404':
+          description: The impressumstext was not found
+    put:
+      summary: Update an existing impressumstext (full replace)
+      description: >-
+        Updates a single impressumstext by its ID. The properties to update are
+        passed in the request body as JSON. This operation fully replaces the
+        entity and its relations. Leaving a property out will remove it.
+      tags:
+        - Impressumstexts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUpdateImpressumsTextDto'
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the impressumstext
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 123e4567-e89b-12d3-a456-426614174000
+      security:
+        - Admin: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImpressumsText'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Item not Found
+                  error:
+                    type: string
+                    example: Not Found
+                  statusCode:
+                    type: integer
+                    example: 404
+    patch:
+      summary: Update an existing impressumstext (partial update)
+      description: >-
+        Updates a single impressumstext by its ID. The properties to update are
+        passed in the request body as JSON. This operation partially updates the
+        entity and its relations. Leaving a property out will not remove it.
+      tags:
+        - Impressumstexts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUpdateImpressumsTextDto'
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the impressumstext
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 123e4567-e89b-12d3-a456-426614174000
+      security:
+        - Admin: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImpressumsText'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Item not Found
+                  error:
+                    type: string
+                    example: Not Found
+                  statusCode:
+                    type: integer
+                    example: 404
+    delete:
+      summary: Delete an existing impressumstext
+      description: Deletes a single impressumstext by its ID.
+      tags:
+        - Impressumstexts
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the impressumstext
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 123e4567-e89b-12d3-a456-426614174000
+      security:
+        - Admin: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImpressumsText'
+        '404':
+          description: The impressumstext was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Not Found
+                  error:
+                    type: string
+                    example: Not Found
+                  statusCode:
+                    type: integer
+                    example: 404
+  /collections/impressums-texts/select-options:
+    get:
+      summary: List impressumstexts for select options (admin panel)
+      description: >-
+        Retrieves a list of impressumstexts for select options. The response is
+        an array of objects with the properties 'id' and 'label'. Used in the
+        admin panel to fill select dropdowns.
+      tags:
+        - Impressumstexts
+      security:
+        - Admin: []
+      responses:
+        '200':
+          description: List of impressumstexts for select options
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SelectOption'
+  /singles/impressum:
+    get:
+      summary: Get a single impressum
+      description: Retrieves the details of a single impressum by its ID.
+      tags:
+        - Impressum
+      parameters: []
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Impressum'
+        '404':
+          description: The impressum was not found
+    patch:
+      summary: Update an existing impressum (partial update)
+      description: >-
+        Updates a single impressum by its ID. The properties to update are
+        passed in the request body as JSON. This operation partially updates the
+        entity and its relations. Leaving a property out will not remove it.
+      tags:
+        - Impressum
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUpdateImpressumDto'
+      parameters: []
+      security:
+        - Admin: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Impressum'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Item not Found
+                  error:
+                    type: string
+                    example: Not Found
+                  statusCode:
+                    type: integer
+                    example: 404
+  /singles/galerie-seite:
+    get:
+      summary: Get a single galerie
+      description: Retrieves the details of a single galerie by its ID.
+      tags:
+        - Galerie
+      parameters: []
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GalerieSeite'
+        '404':
+          description: The galerie was not found
+    patch:
+      summary: Update an existing galerie (partial update)
+      description: >-
+        Updates a single galerie by its ID. The properties to update are passed
+        in the request body as JSON. This operation partially updates the entity
+        and its relations. Leaving a property out will not remove it.
+      tags:
+        - Galerie
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUpdateGalerieSeiteDto'
+      parameters: []
+      security:
+        - Admin: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GalerieSeite'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Item not Found
+                  error:
+                    type: string
+                    example: Not Found
+                  statusCode:
+                    type: integer
+                    example: 404
+  /singles/homepage:
+    get:
+      summary: Get a single hauptseite
+      description: Retrieves the details of a single hauptseite by its ID.
+      tags:
+        - Hauptseite
+      parameters: []
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Homepage'
+        '404':
+          description: The hauptseite was not found
+    patch:
+      summary: Update an existing hauptseite (partial update)
+      description: >-
+        Updates a single hauptseite by its ID. The properties to update are
+        passed in the request body as JSON. This operation partially updates the
+        entity and its relations. Leaving a property out will not remove it.
+      tags:
+        - Hauptseite
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUpdateHomepageDto'
+      parameters: []
+      security:
+        - Admin: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Homepage'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Item not Found
+                  error:
+                    type: string
+                    example: Not Found
+                  statusCode:
+                    type: integer
+                    example: 404
+  /singles/about:
+    get:
+      summary: Get a single über mich
+      description: Retrieves the details of a single über mich by its ID.
+      tags:
+        - Über mich
+      parameters: []
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/About'
+        '404':
+          description: The über mich was not found
+    patch:
+      summary: Update an existing über mich (partial update)
+      description: >-
+        Updates a single über mich by its ID. The properties to update are
+        passed in the request body as JSON. This operation partially updates the
+        entity and its relations. Leaving a property out will not remove it.
+      tags:
+        - Über mich
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUpdateAboutDto'
+      parameters: []
+      security:
+        - Admin: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/About'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Item not Found
+                  error:
+                    type: string
+                    example: Not Found
+                  statusCode:
+                    type: integer
+                    example: 404
+  /singles/einstellungen:
+    get:
+      summary: Get a single einstellungen
+      description: Retrieves the details of a single einstellungen by its ID.
+      tags:
+        - Einstellungen
+      parameters: []
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Einstellungen'
+        '404':
+          description: The einstellungen was not found
+    patch:
+      summary: Update an existing einstellungen (partial update)
+      description: >-
+        Updates a single einstellungen by its ID. The properties to update are
+        passed in the request body as JSON. This operation partially updates the
+        entity and its relations. Leaving a property out will not remove it.
+      tags:
+        - Einstellungen
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUpdateEinstellungenDto'
+      parameters: []
+      security:
+        - Admin: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Einstellungen'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Item not Found
+                  error:
+                    type: string
+                    example: Not Found
+                  statusCode:
+                    type: integer
+                    example: 404
+  /manifest:
+    get:
+      summary: Get the manifest
+      description: Retrieves the manifest of the application.
+      tags:
+        - Manifest
+      security:
+        - Admin: []
+      responses:
+        '200':
+          description: The manifest of the application.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppManifest'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  error:
+                    type: string
+                  statusCode:
+                    type: number
+              example:
+                message: Forbidden resource
+                error: Forbidden
+                statusCode: 403
+  /manifest/entities/albums:
+    get:
+      summary: Get the album manifest
+      description: Retrieves the manifest of the album entity with all its properties.
+      tags:
+        - Manifest
+      security:
+        - Admin: []
+      responses:
+        '200':
+          description: The manifest of the album entity.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityManifest'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  error:
+                    type: string
+                  statusCode:
+                    type: number
+              example:
+                message: Forbidden resource
+                error: Forbidden
+                statusCode: 403
+  /manifest/entities/bilders:
+    get:
+      summary: Get the bilder manifest
+      description: Retrieves the manifest of the bilder entity with all its properties.
+      tags:
+        - Manifest
+      security:
+        - Admin: []
+      responses:
+        '200':
+          description: The manifest of the bilder entity.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityManifest'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  error:
+                    type: string
+                  statusCode:
+                    type: number
+              example:
+                message: Forbidden resource
+                error: Forbidden
+                statusCode: 403
+  /manifest/entities/impressums-texts:
+    get:
+      summary: Get the impressumstext manifest
+      description: >-
+        Retrieves the manifest of the impressumstext entity with all its
+        properties.
+      tags:
+        - Manifest
+      security:
+        - Admin: []
+      responses:
+        '200':
+          description: The manifest of the impressumstext entity.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityManifest'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  error:
+                    type: string
+                  statusCode:
+                    type: number
+              example:
+                message: Forbidden resource
+                error: Forbidden
+                statusCode: 403
+  /manifest/entities/impressum:
+    get:
+      summary: Get the impressum manifest
+      description: Retrieves the manifest of the impressum entity with all its properties.
+      tags:
+        - Manifest
+      security:
+        - Admin: []
+      responses:
+        '200':
+          description: The manifest of the impressum entity.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityManifest'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  error:
+                    type: string
+                  statusCode:
+                    type: number
+              example:
+                message: Forbidden resource
+                error: Forbidden
+                statusCode: 403
+  /manifest/entities/galerie-seite:
+    get:
+      summary: Get the galerie manifest
+      description: Retrieves the manifest of the galerie entity with all its properties.
+      tags:
+        - Manifest
+      security:
+        - Admin: []
+      responses:
+        '200':
+          description: The manifest of the galerie entity.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityManifest'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  error:
+                    type: string
+                  statusCode:
+                    type: number
+              example:
+                message: Forbidden resource
+                error: Forbidden
+                statusCode: 403
+  /manifest/entities/homepage:
+    get:
+      summary: Get the hauptseite manifest
+      description: Retrieves the manifest of the hauptseite entity with all its properties.
+      tags:
+        - Manifest
+      security:
+        - Admin: []
+      responses:
+        '200':
+          description: The manifest of the hauptseite entity.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityManifest'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  error:
+                    type: string
+                  statusCode:
+                    type: number
+              example:
+                message: Forbidden resource
+                error: Forbidden
+                statusCode: 403
+  /manifest/entities/about:
+    get:
+      summary: Get the über mich manifest
+      description: Retrieves the manifest of the über mich entity with all its properties.
+      tags:
+        - Manifest
+      security:
+        - Admin: []
+      responses:
+        '200':
+          description: The manifest of the über mich entity.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityManifest'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  error:
+                    type: string
+                  statusCode:
+                    type: number
+              example:
+                message: Forbidden resource
+                error: Forbidden
+                statusCode: 403
+  /manifest/entities/einstellungen:
+    get:
+      summary: Get the einstellungen manifest
+      description: >-
+        Retrieves the manifest of the einstellungen entity with all its
+        properties.
+      tags:
+        - Manifest
+      security:
+        - Admin: []
+      responses:
+        '200':
+          description: The manifest of the einstellungen entity.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityManifest'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  error:
+                    type: string
+                  statusCode:
+                    type: number
+              example:
+                message: Forbidden resource
+                error: Forbidden
+                statusCode: 403
+  /auth/admins/login:
+    post:
+      summary: Login as a admin
+      description: Logs in as a admin.
+      tags:
+        - Auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+              required:
+                - email
+                - password
+            example:
+              email: example@manifest.build
+              password: password
+      responses:
+        '200':
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+              example:
+                token: >-
+                  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZXhhbXBsZS5jb20iLCJlbnRpdHlTbHVnIjoidHJhaW5lcnMiLCJpYXQiOjE3NTA4NjUyNjB9.8KRlyPPlNWvHDc_yaocqrqYBhAzAyn5PvyCKyvUUCM4
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                  message:
+                    type: array
+                    items:
+                      type: string
+                  error:
+                    type: string
+              example:
+                message:
+                  - password should not be empty
+                statusCode: 400
+                error: Bad Request
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                  message:
+                    type: string
+              example:
+                message: Invalid email or password
+                statusCode: 401
+  /auth/admins/me:
+    get:
+      summary: Get current admin
+      description: Get current admin.
+      tags:
+        - Auth
+      security:
+        - Admin: []
+      responses:
+        '200':
+          description: Successful request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Admin'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                  message:
+                    type: string
+                  error:
+                    type: string
+              example:
+                message: Forbidden resource
+                error: Forbidden
+                statusCode: 403
+components:
+  schemas:
+    Album:
+      type: object
+      description: Album entity schema
+      properties:
+        id:
+          type: string
+          description: The unique identifier for the entity
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+          nullable: true
+        Name:
+          type: string
+          description: The Name property of the entity (text)
+          example: >-
+            This is a longer text example that might span multiple lines and
+            contain more detailed information.
+          nullable: true
+        Cover-Bild:
+          description: The Cover-Bild property of the entity (image)
+          type: object
+          additionalProperties: false
+          example:
+            small: https://example.com/image-small.jpg
+            large: https://example.com/image-large.jpg
+            original: https://example.com/image-original.jpg
+          required:
+            - small
+            - large
+            - original
+          properties:
+            small:
+              type: string
+              format: uri
+              description: Image URL for size small
+              example: https://example.com/image-small.jpg
+            large:
+              type: string
+              format: uri
+              description: Image URL for size large
+              example: https://example.com/image-large.jpg
+            original:
+              type: string
+              format: uri
+              description: Image URL for size original
+              example: https://example.com/image-original.jpg
+        bilders:
+          type: array
+          description: Array of bilders entities
+          items:
+            $ref: '#/components/schemas/Bilder'
+    Bilder:
+      type: object
+      description: Bilder entity schema
+      properties:
+        id:
+          type: string
+          description: The unique identifier for the entity
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+          nullable: true
+        Bild:
+          description: The Bild property of the entity (image)
+          type: object
+          additionalProperties: false
+          example:
+            small: https://example.com/image-small.jpg
+            large: https://example.com/image-large.jpg
+            original: https://example.com/image-original.jpg
+          required:
+            - small
+            - large
+            - original
+          properties:
+            small:
+              type: string
+              format: uri
+              description: Image URL for size small
+              example: https://example.com/image-small.jpg
+            large:
+              type: string
+              format: uri
+              description: Image URL for size large
+              example: https://example.com/image-large.jpg
+            original:
+              type: string
+              format: uri
+              description: Image URL for size original
+              example: https://example.com/image-original.jpg
+        Bildunterschrift:
+          type: string
+          description: The Bildunterschrift property of the entity (text)
+          example: >-
+            This is a longer text example that might span multiple lines and
+            contain more detailed information.
+          nullable: true
+        IstTopBild:
+          type: boolean
+          description: The IstTopBild property of the entity (boolean)
+          example: true
+          nullable: true
+        album:
+          type: object
+          description: Single album entity
+          $ref: '#/components/schemas/Album'
+        albums:
+          type: array
+          description: Array of albums entities
+          items:
+            $ref: '#/components/schemas/Album'
+    ImpressumsText:
+      type: object
+      description: ImpressumsText entity schema
+      properties:
+        id:
+          type: string
+          description: The unique identifier for the entity
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+          nullable: true
+        Text:
+          type: string
+          description: The Text property of the entity (richText)
+          example: >-
+            <p>This is <strong>rich text</strong> with <em>HTML formatting</em>
+            and <a href="https://example.com">links</a>.</p>
+          nullable: true
+        Sortierreihenfolge:
+          type: integer
+          description: The Sortierreihenfolge property of the entity (number)
+          example: 42
+          format: float
+          nullable: true
+        IstÜberschrift:
+          type: boolean
+          description: The IstÜberschrift property of the entity (boolean)
+          example: true
+          nullable: true
+    Impressum:
+      type: object
+      description: Impressum entity schema
+      properties:
+        id:
+          type: string
+          description: The unique identifier for the entity
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+          nullable: true
+        Überschrift:
+          type: string
+          description: The Überschrift property of the entity (text)
+          example: >-
+            This is a longer text example that might span multiple lines and
+            contain more detailed information.
+          nullable: true
+    GalerieSeite:
+      type: object
+      description: GalerieSeite entity schema
+      properties:
+        id:
+          type: string
+          description: The unique identifier for the entity
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+          nullable: true
+        Überschrift:
+          type: string
+          description: The Überschrift property of the entity (text)
+          example: >-
+            This is a longer text example that might span multiple lines and
+            contain more detailed information.
+          nullable: true
+    Homepage:
+      type: object
+      description: Homepage entity schema
+      properties:
+        id:
+          type: string
+          description: The unique identifier for the entity
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+          nullable: true
+        Überschrift:
+          type: string
+          description: The Überschrift property of the entity (text)
+          example: >-
+            This is a longer text example that might span multiple lines and
+            contain more detailed information.
+          nullable: true
+        Haupttext:
+          type: string
+          description: The Haupttext property of the entity (text)
+          example: >-
+            This is a longer text example that might span multiple lines and
+            contain more detailed information.
+          nullable: true
+        Best Of Text:
+          type: string
+          description: The Best Of Text property of the entity (text)
+          example: >-
+            This is a longer text example that might span multiple lines and
+            contain more detailed information.
+          nullable: true
+        Info Text:
+          type: string
+          description: The Info Text property of the entity (text)
+          example: >-
+            This is a longer text example that might span multiple lines and
+            contain more detailed information.
+          nullable: true
+        Seitenbild:
+          description: The Seitenbild property of the entity (image)
+          type: object
+          additionalProperties: false
+          example:
+            small: https://example.com/image-small.jpg
+            large: https://example.com/image-large.jpg
+            original: https://example.com/image-original.jpg
+          required:
+            - small
+            - large
+            - original
+          properties:
+            small:
+              type: string
+              format: uri
+              description: Image URL for size small
+              example: https://example.com/image-small.jpg
+            large:
+              type: string
+              format: uri
+              description: Image URL for size large
+              example: https://example.com/image-large.jpg
+            original:
+              type: string
+              format: uri
+              description: Image URL for size original
+              example: https://example.com/image-original.jpg
+        Hintergrundbild:
+          description: The Hintergrundbild property of the entity (image)
+          type: object
+          additionalProperties: false
+          example:
+            small: https://example.com/image-small.jpg
+            large: https://example.com/image-large.jpg
+            original: https://example.com/image-original.jpg
+          required:
+            - small
+            - large
+            - original
+          properties:
+            small:
+              type: string
+              format: uri
+              description: Image URL for size small
+              example: https://example.com/image-small.jpg
+            large:
+              type: string
+              format: uri
+              description: Image URL for size large
+              example: https://example.com/image-large.jpg
+            original:
+              type: string
+              format: uri
+              description: Image URL for size original
+              example: https://example.com/image-original.jpg
+    About:
+      type: object
+      description: About entity schema
+      properties:
+        id:
+          type: string
+          description: The unique identifier for the entity
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+          nullable: true
+        Überschrift:
+          type: string
+          description: The Überschrift property of the entity (text)
+          example: >-
+            This is a longer text example that might span multiple lines and
+            contain more detailed information.
+          nullable: true
+        Teilüberschrift:
+          type: string
+          description: The Teilüberschrift property of the entity (text)
+          example: >-
+            This is a longer text example that might span multiple lines and
+            contain more detailed information.
+          nullable: true
+        Teil Text:
+          type: string
+          description: The Teil Text property of the entity (text)
+          example: >-
+            This is a longer text example that might span multiple lines and
+            contain more detailed information.
+          nullable: true
+        Teilüberschrift 2:
+          type: string
+          description: The Teilüberschrift 2 property of the entity (text)
+          example: >-
+            This is a longer text example that might span multiple lines and
+            contain more detailed information.
+          nullable: true
+        Teil Text 2:
+          type: string
+          description: The Teil Text 2 property of the entity (text)
+          example: >-
+            This is a longer text example that might span multiple lines and
+            contain more detailed information.
+          nullable: true
+        Ich Bild:
+          description: The Ich Bild property of the entity (image)
+          type: object
+          additionalProperties: false
+          example:
+            small: https://example.com/image-small.jpg
+            large: https://example.com/image-large.jpg
+            original: https://example.com/image-original.jpg
+          required:
+            - small
+            - large
+            - original
+          properties:
+            small:
+              type: string
+              format: uri
+              description: Image URL for size small
+              example: https://example.com/image-small.jpg
+            large:
+              type: string
+              format: uri
+              description: Image URL for size large
+              example: https://example.com/image-large.jpg
+            original:
+              type: string
+              format: uri
+              description: Image URL for size original
+              example: https://example.com/image-original.jpg
+    Einstellungen:
+      type: object
+      description: Einstellungen entity schema
+      properties:
+        id:
+          type: string
+          description: The unique identifier for the entity
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+          nullable: true
+        Logo:
+          description: The Logo property of the entity (image)
+          type: object
+          additionalProperties: false
+          example:
+            small: https://example.com/image-small.jpg
+            large: https://example.com/image-large.jpg
+            original: https://example.com/image-original.jpg
+          required:
+            - small
+            - large
+            - original
+          properties:
+            small:
+              type: string
+              format: uri
+              description: Image URL for size small
+              example: https://example.com/image-small.jpg
+            large:
+              type: string
+              format: uri
+              description: Image URL for size large
+              example: https://example.com/image-large.jpg
+            original:
+              type: string
+              format: uri
+              description: Image URL for size original
+              example: https://example.com/image-original.jpg
+        Instagram Link:
+          type: string
+          description: The Instagram Link property of the entity (text)
+          example: >-
+            This is a longer text example that might span multiple lines and
+            contain more detailed information.
+          nullable: true
+        Tiktok Link:
+          type: string
+          description: The Tiktok Link property of the entity (text)
+          example: >-
+            This is a longer text example that might span multiple lines and
+            contain more detailed information.
+          nullable: true
+        Youtube Link:
+          type: string
+          description: The Youtube Link property of the entity (text)
+          example: >-
+            This is a longer text example that might span multiple lines and
+            contain more detailed information.
+          nullable: true
+    CreateUpdateAlbumDto:
+      type: object
+      description: CreateUpdateAlbumDto entity schema
+      properties:
+        Name:
+          type: string
+          description: The Name property of the entity (text)
+          example: >-
+            This is a longer text example that might span multiple lines and
+            contain more detailed information.
+          nullable: true
+        Cover-Bild:
+          description: The Cover-Bild property of the entity (image)
+          type: object
+          additionalProperties: false
+          example:
+            small: https://example.com/image-small.jpg
+            large: https://example.com/image-large.jpg
+            original: https://example.com/image-original.jpg
+          required:
+            - small
+            - large
+            - original
+          properties:
+            small:
+              type: string
+              format: uri
+              description: Image URL for size small
+              example: https://example.com/image-small.jpg
+            large:
+              type: string
+              format: uri
+              description: Image URL for size large
+              example: https://example.com/image-large.jpg
+            original:
+              type: string
+              format: uri
+              description: Image URL for size original
+              example: https://example.com/image-original.jpg
+        bilderIds:
+          type: array
+          description: Array of IDs for bilderIds entities
+          items:
+            type: string
+            format: uuid
+            example: f47ac10b-58cc-4372-a567-0e02b2c3d479
+    CreateUpdateBilderDto:
+      type: object
+      description: CreateUpdateBilderDto entity schema
+      properties:
+        Bild:
+          description: The Bild property of the entity (image)
+          type: object
+          additionalProperties: false
+          example:
+            small: https://example.com/image-small.jpg
+            large: https://example.com/image-large.jpg
+            original: https://example.com/image-original.jpg
+          required:
+            - small
+            - large
+            - original
+          properties:
+            small:
+              type: string
+              format: uri
+              description: Image URL for size small
+              example: https://example.com/image-small.jpg
+            large:
+              type: string
+              format: uri
+              description: Image URL for size large
+              example: https://example.com/image-large.jpg
+            original:
+              type: string
+              format: uri
+              description: Image URL for size original
+              example: https://example.com/image-original.jpg
+        Bildunterschrift:
+          type: string
+          description: The Bildunterschrift property of the entity (text)
+          example: >-
+            This is a longer text example that might span multiple lines and
+            contain more detailed information.
+          nullable: true
+        IstTopBild:
+          type: boolean
+          description: The IstTopBild property of the entity (boolean)
+          example: true
+          nullable: true
+        albumId:
+          type: string
+          description: ID of the albumId entity
+          format: uuid
+          example: f47ac10b-58cc-4372-a567-0e02b2c3d479
+        albumIds:
+          type: array
+          description: Array of IDs for albumIds entities
+          items:
+            type: string
+            format: uuid
+            example: f47ac10b-58cc-4372-a567-0e02b2c3d479
+    CreateUpdateImpressumsTextDto:
+      type: object
+      description: CreateUpdateImpressumsTextDto entity schema
+      properties:
+        Text:
+          type: string
+          description: The Text property of the entity (richText)
+          example: >-
+            <p>This is <strong>rich text</strong> with <em>HTML formatting</em>
+            and <a href="https://example.com">links</a>.</p>
+          nullable: true
+        Sortierreihenfolge:
+          type: integer
+          description: The Sortierreihenfolge property of the entity (number)
+          example: 42
+          format: float
+          nullable: true
+        IstÜberschrift:
+          type: boolean
+          description: The IstÜberschrift property of the entity (boolean)
+          example: true
+          nullable: true
+    CreateUpdateImpressumDto:
+      type: object
+      description: CreateUpdateImpressumDto entity schema
+      properties:
+        Überschrift:
+          type: string
+          description: The Überschrift property of the entity (text)
+          example: >-
+            This is a longer text example that might span multiple lines and
+            contain more detailed information.
+          nullable: true
+    CreateUpdateGalerieSeiteDto:
+      type: object
+      description: CreateUpdateGalerieSeiteDto entity schema
+      properties:
+        Überschrift:
+          type: string
+          description: The Überschrift property of the entity (text)
+          example: >-
+            This is a longer text example that might span multiple lines and
+            contain more detailed information.
+          nullable: true
+    CreateUpdateHomepageDto:
+      type: object
+      description: CreateUpdateHomepageDto entity schema
+      properties:
+        Überschrift:
+          type: string
+          description: The Überschrift property of the entity (text)
+          example: >-
+            This is a longer text example that might span multiple lines and
+            contain more detailed information.
+          nullable: true
+        Haupttext:
+          type: string
+          description: The Haupttext property of the entity (text)
+          example: >-
+            This is a longer text example that might span multiple lines and
+            contain more detailed information.
+          nullable: true
+        Best Of Text:
+          type: string
+          description: The Best Of Text property of the entity (text)
+          example: >-
+            This is a longer text example that might span multiple lines and
+            contain more detailed information.
+          nullable: true
+        Info Text:
+          type: string
+          description: The Info Text property of the entity (text)
+          example: >-
+            This is a longer text example that might span multiple lines and
+            contain more detailed information.
+          nullable: true
+        Seitenbild:
+          description: The Seitenbild property of the entity (image)
+          type: object
+          additionalProperties: false
+          example:
+            small: https://example.com/image-small.jpg
+            large: https://example.com/image-large.jpg
+            original: https://example.com/image-original.jpg
+          required:
+            - small
+            - large
+            - original
+          properties:
+            small:
+              type: string
+              format: uri
+              description: Image URL for size small
+              example: https://example.com/image-small.jpg
+            large:
+              type: string
+              format: uri
+              description: Image URL for size large
+              example: https://example.com/image-large.jpg
+            original:
+              type: string
+              format: uri
+              description: Image URL for size original
+              example: https://example.com/image-original.jpg
+        Hintergrundbild:
+          description: The Hintergrundbild property of the entity (image)
+          type: object
+          additionalProperties: false
+          example:
+            small: https://example.com/image-small.jpg
+            large: https://example.com/image-large.jpg
+            original: https://example.com/image-original.jpg
+          required:
+            - small
+            - large
+            - original
+          properties:
+            small:
+              type: string
+              format: uri
+              description: Image URL for size small
+              example: https://example.com/image-small.jpg
+            large:
+              type: string
+              format: uri
+              description: Image URL for size large
+              example: https://example.com/image-large.jpg
+            original:
+              type: string
+              format: uri
+              description: Image URL for size original
+              example: https://example.com/image-original.jpg
+    CreateUpdateAboutDto:
+      type: object
+      description: CreateUpdateAboutDto entity schema
+      properties:
+        Überschrift:
+          type: string
+          description: The Überschrift property of the entity (text)
+          example: >-
+            This is a longer text example that might span multiple lines and
+            contain more detailed information.
+          nullable: true
+        Teilüberschrift:
+          type: string
+          description: The Teilüberschrift property of the entity (text)
+          example: >-
+            This is a longer text example that might span multiple lines and
+            contain more detailed information.
+          nullable: true
+        Teil Text:
+          type: string
+          description: The Teil Text property of the entity (text)
+          example: >-
+            This is a longer text example that might span multiple lines and
+            contain more detailed information.
+          nullable: true
+        Teilüberschrift 2:
+          type: string
+          description: The Teilüberschrift 2 property of the entity (text)
+          example: >-
+            This is a longer text example that might span multiple lines and
+            contain more detailed information.
+          nullable: true
+        Teil Text 2:
+          type: string
+          description: The Teil Text 2 property of the entity (text)
+          example: >-
+            This is a longer text example that might span multiple lines and
+            contain more detailed information.
+          nullable: true
+        Ich Bild:
+          description: The Ich Bild property of the entity (image)
+          type: object
+          additionalProperties: false
+          example:
+            small: https://example.com/image-small.jpg
+            large: https://example.com/image-large.jpg
+            original: https://example.com/image-original.jpg
+          required:
+            - small
+            - large
+            - original
+          properties:
+            small:
+              type: string
+              format: uri
+              description: Image URL for size small
+              example: https://example.com/image-small.jpg
+            large:
+              type: string
+              format: uri
+              description: Image URL for size large
+              example: https://example.com/image-large.jpg
+            original:
+              type: string
+              format: uri
+              description: Image URL for size original
+              example: https://example.com/image-original.jpg
+    CreateUpdateEinstellungenDto:
+      type: object
+      description: CreateUpdateEinstellungenDto entity schema
+      properties:
+        Logo:
+          description: The Logo property of the entity (image)
+          type: object
+          additionalProperties: false
+          example:
+            small: https://example.com/image-small.jpg
+            large: https://example.com/image-large.jpg
+            original: https://example.com/image-original.jpg
+          required:
+            - small
+            - large
+            - original
+          properties:
+            small:
+              type: string
+              format: uri
+              description: Image URL for size small
+              example: https://example.com/image-small.jpg
+            large:
+              type: string
+              format: uri
+              description: Image URL for size large
+              example: https://example.com/image-large.jpg
+            original:
+              type: string
+              format: uri
+              description: Image URL for size original
+              example: https://example.com/image-original.jpg
+        Instagram Link:
+          type: string
+          description: The Instagram Link property of the entity (text)
+          example: >-
+            This is a longer text example that might span multiple lines and
+            contain more detailed information.
+          nullable: true
+        Tiktok Link:
+          type: string
+          description: The Tiktok Link property of the entity (text)
+          example: >-
+            This is a longer text example that might span multiple lines and
+            contain more detailed information.
+          nullable: true
+        Youtube Link:
+          type: string
+          description: The Youtube Link property of the entity (text)
+          example: >-
+            This is a longer text example that might span multiple lines and
+            contain more detailed information.
+          nullable: true
+    Paginator:
+      type: object
+      description: >-
+        A paginated response object, containing an array of data and pagination
+        information.
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+        currentPage:
+          type: integer
+          example: 1
+        lastPage:
+          type: integer
+          example: 20
+        from:
+          type: integer
+          example: 1
+        to:
+          type: integer
+          example: 10
+        total:
+          type: integer
+          example: 200
+        perPage:
+          type: integer
+          example: 10
+      required:
+        - data
+        - currentPage
+        - lastPage
+        - from
+        - to
+        - total
+        - perPage
+    SelectOption:
+      type: object
+      description: >-
+        A small object representing a selectable option. Useful for dropdowns in
+        admin panels.
+      properties:
+        id:
+          type: number
+        label:
+          type: string
+      required:
+        - id
+        - label
+    AppManifest:
+      type: object
+      description: >-
+        The manifest of the application, containing metadata and entities. Gives
+        an overview of the application structure.
+      properties:
+        name:
+          type: string
+        entities:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/EntityManifest'
+    EntityManifest:
+      type: object
+      description: >-
+        The manifest of an entity, containing its properties and relationships.
+        Provides a detailed structure of the entity.
+      properties:
+        className:
+          type: string
+        nameSingular:
+          type: string
+        namePlural:
+          type: string
+        slug:
+          type: string
+        mainProp:
+          type: string
+        seedCount:
+          type: number
+        belongsTo:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelationshipManifest'
+        properties:
+          type: array
+          items:
+            $ref: '#/components/schemas/PropertyManifest'
+      required:
+        - className
+        - nameSingular
+        - namePlural
+        - slug
+        - mainProp
+        - seedCount
+    RelationshipManifest:
+      type: object
+      description: >-
+        The manifest of a relationship between entities, describing how they are
+        connected.
+      properties:
+        name:
+          type: string
+        entity:
+          type: string
+        eager:
+          type: boolean
+      required:
+        - name
+        - entity
+    PropertyManifest:
+      type: object
+      description: >-
+        The manifest of a property of an entity, describing its type and
+        characteristics.
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+      required:
+        - name
+        - type
+  securitySchemes:
+    Admin:
+      type: http
+      scheme: bearer
+      name: Admin auth
+      bearerFormat: JWT
+      description: >-
+        Authentication for Admin entity. Use POST /auth/admins/login to get a
+        token.

@@ -1,0 +1,105 @@
+﻿@page "/"
+@using MSLib.Models
+@using MSLib.Services
+@inject CmsService CmsService
+
+<head>
+    <link rel="stylesheet" href="css/home.css"/>
+</head>
+
+<PageTitle>Max Schmalbach</PageTitle>
+
+<section id="Home">
+    <div class="background">
+        <div class="background_mask">
+            <div class="home-left-section">
+                <h3 class="Primary_Txt">@Homepage.Überschrift</h3>
+                <p class="Primary_Txt home-desc">@Homepage.Haupttext</p>
+                <div>
+                    <a href="/Galerie">
+                        <button style="width: 12em; margin: 1em;" class="button_OutLnd contact_button hover_Normal">
+                            <p class="Primary_Txt Button_Text">Projekte</p>
+                        </button>
+                    </a>
+                    <a href="mailto:info@ms-agrarpicture.de">
+                        <button style="width: 12em; margin: 1em;" class="button contact_button hover_Normal">
+                            <p class="Primary_Txt Button_Text">Kontakt</p>
+                        </button>
+                    </a>
+                </div>
+            </div>
+            <div class="home-right-section">
+                <img alt="Hauptbild" src="@Homepage.Seitenbild"/>
+            </div>
+            <a href="#BestOf">
+                <div id="arrow_to_bottom">
+                    <img src="/arrow_dwn.svg"/>
+                </div>
+            </a>
+
+        </div>
+        <img alt="Hintergrund" class="background_img" src="@Homepage.Hintergrundbild"/>
+    </div>
+</section>
+
+<section id="BestOf">
+    <div class="Arts_Main">
+        <h4 class="Heading Primary_Txt aos" style="margin-top: 1em;">@Homepage.BestOfText</h4>
+        <div class="logos">
+            <div class="logos-slide">
+                @foreach (var pic in TopPicsLinks.Take(TopPicsLinks.Count / 2))
+                {
+                    <img src="@pic" class="work-slide-img" alt="{{item.title}}"/>
+                }
+            </div>
+
+            <div class="logos-slide">
+                @foreach (var pic in TopPicsLinks.Take(TopPicsLinks.Count / 2))
+                {
+                    <img src="@pic" class="work-slide-img" alt="{{item.title}}"/>
+                }            
+            </div>
+        </div>
+        <div class="logos">
+            <div class="logos-slide-reverse">
+                @foreach (var pic in TopPicsLinks.TakeLast(TopPicsLinks.Count / 2))
+                {
+                    <img src="@pic" class="work-slide-img" alt="{{item.title}}"/>
+                }            
+            </div>
+            <div class="logos-slide-reverse">
+                @foreach (var pic in TopPicsLinks.TakeLast(TopPicsLinks.Count / 2))
+                {
+                    <img src="@pic" class="work-slide-img" alt="{{item.title}}"/>
+                }            
+            </div>
+        </div>
+    </div>
+    <div class="Info">
+        <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="128" height="128" viewBox="0 0 128 128">
+            <path d="M 64 6 C 32 6 6 32 6 64 C 6 96 32 122 64 122 C 96 122 122 96 122 64 C 122 32 96 6 64 6 z M 64 12 C 92.7 12 116 35.3 116 64 C 116 92.7 92.7 116 64 116 C 35.3 116 12 92.7 12 64 C 12 35.3 35.3 12 64 12 z M 64 30 A 9 9 0 0 0 64 48 A 9 9 0 0 0 64 30 z M 64 59 C 59 59 55 63 55 68 L 55 92 C 55 97 59 101 64 101 C 69 101 73 97 73 92 L 73 68 C 73 63 69 59 64 59 z"></path>
+        </svg>
+        <p class="Primary_Txt">@Homepage.InfoText</p>
+    </div>
+</section>
+
+@code {
+
+    private Homepage Homepage = new Homepage();
+    private List<Album> Albums = new List<Album>();
+
+    private List<string> TopPicsLinks = new List<string>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Homepage = await CmsService.GetHomepageAsync();
+        Albums = await CmsService.GetAlbumsAsync();
+
+        TopPicsLinks = Albums
+            .SelectMany(x => x.Bilders)
+            .Where(y => y.IstTopBild)
+            .Select(z => z.Bild.Original)
+            .ToList();
+    }
+
+}

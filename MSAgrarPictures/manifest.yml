@@ -1,0 +1,192 @@
+# Manifest / backend.yml
+# Zusammengeführt aus deinen bisherigen Entitäten, inklusive Galerie, Album, Bilder, Impressum, Einstellungen etc.
+
+name: Max Schmalbach
+
+entities:
+
+  Album:
+    properties:
+      - { name: Name, type: text, validation: { isNotEmpty: true } }
+      - { 
+          name: Cover-Bild,
+          type: image,
+          options:
+          {
+            sizes: {
+              small: { width: 90, height: 90 },
+              large: { width: 200 },
+              original: {}
+            }
+          }
+        }
+    belongsToMany:
+      - { name: Bilder, entity: Bilder, eager: true, helpText: 'Bilder für dieses Album' }
+    policies:
+      create:
+        - { access: restricted, allow: User }
+      read:
+        - access: public
+      update:
+        - access: admin
+
+  Bilder:
+    properties:
+      - {
+          name: Bild,
+          type: image,
+          options:
+          {
+            sizes: {
+              small: { width: 90, height: 90 },
+              large: { width: 200 },
+              original: {}
+            }
+          }
+        }
+      - { name: Bildunterschrift, type: text }
+      - { name: IstTopBild, type: boolean }
+    belongsTo:
+      - { name: Album, entity: Album, helpText: 'Album zu dem dieses Bild gehört' }
+    policies:
+      create:
+        - { access: restricted, allow: User }
+      read:
+        - access: public
+      update:
+        - access: admin
+
+  ImpressumsText:
+    properties:
+      - { name: Text, type: richText, validation: { isNotEmpty: true } }
+      - { name: Sortierreihenfolge, type: number }
+      - { name: IstÜberschrift, type: boolean }
+    policies:
+      create:
+        - { access: restricted, allow: User }
+      read:
+        - access: public
+      update:
+        - access: admin
+
+  Impressum:
+    nameSingular: Impressum
+    single: true
+    properties:
+      - { name: Überschrift, type: text, validation: { isNotEmpty: true } }
+    policies:
+      create:
+        - { access: restricted, allow: User }
+      read:
+        - access: public
+      update:
+        - access: admin
+
+  GalerieSeite:
+    nameSingular: Galerie
+    single: true
+    properties:
+      - { name: Überschrift, type: text, validation: { isNotEmpty: true } }
+    policies:
+      create:
+        - { access: restricted, allow: User }
+      read:
+        - access: public
+      update:
+        - access: admin
+
+  Homepage:
+    nameSingular: Hauptseite
+    single: true
+    properties:
+      - { name: Überschrift, type: text, validation: { isNotEmpty: true } }
+      - { name: Haupttext, type: text, validation: { isNotEmpty: true } }
+      - { name: Best Of Text, type: text, validation: { isNotEmpty: true } }
+      - { name: Info Text, type: text, validation: { isNotEmpty: true } }
+      - {
+          name: Seitenbild,
+          type: file,
+          options:
+          {
+            sizes: {
+              small: { width: 90, height: 90 },
+              large: { width: 200 },
+              original: {}
+            }
+          }
+        }
+      - {
+          name: Hintergrundbild,
+          type: file,
+          options:
+          {
+            sizes: {
+              small: { width: 90, height: 90 },
+              large: { width: 200 },
+              original: {}
+            }
+          }
+        }
+    policies:
+      create:
+        - { access: restricted, allow: User }
+      read:
+        - access: public
+      update:
+        - access: admin
+
+  About:
+    nameSingular: Über Mich
+    single: true
+    properties:
+      - { name: Überschrift, type: text, validation: { isNotEmpty: true } }
+      - { name: Teilüberschrift, type: text, validation: { isNotEmpty: true } }
+      - { name: Teil Text, type: text, validation: { isNotEmpty: true } }
+      - { name: Teilüberschrift 2, type: text, validation: { isNotEmpty: true } }
+      - { name: Teil Text 2, type: text, validation: { isNotEmpty: true } }
+      - {
+          name: Ich Bild,
+          type: image,
+          options:
+          {
+            sizes: {
+              small: { width: 90, height: 90 },
+              large: { width: 200 },
+              original: {}
+            }
+          }
+        }
+    policies:
+      create:
+        - { access: restricted, allow: User }
+      read:
+        - access: public
+      update:
+        - access: admin
+
+  Einstellungen:
+    nameSingular: Einstellungen
+    single: true
+    properties:
+      - {
+          name: Logo,
+          type: file,
+          options:
+          {
+            sizes: {
+              small: { width: 90, height: 90 },
+              large: { width: 200 },
+              original: {}
+            }
+          }
+        }
+      - { name: Instagram Link, type: text }
+      - { name: Tiktok Link, type: text }
+      - { name: Youtube Link, type: text }
+    policies:
+      create:
+        - { access: restricted, allow: User }
+      read:
+        - access: public
+      update:
+        - access: admin

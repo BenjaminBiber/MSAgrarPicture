@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "lessc": "^1.0.2",
+    "manifest": "^4.15.0"
+  },
+  "scripts": {
+    "less": "lessc wwwroot/less/styles.less wwwroot/css/styles.css --verbose",
+    "less-Gallery": "lessc wwwroot/less/gallery.less wwwroot/css/gallery.css --verbose",
+    "less-Home": "lessc wwwroot/less/home.less wwwroot/css/home.css --verbose",
+    "less-About": "lessc wwwroot/less/about.less wwwroot/css/about.css --verbose",
+    "less-Header": "lessc wwwroot/less/header.less wwwroot/css/header.css --verbose",
+    "less-Footer": "lessc wwwroot/less/footer.less wwwroot/css/footer.css --verbose",
+    "manifest": "node node_modules/manifest/scripts/watch/watch.js",
+    "manifest:seed": "node node_modules/manifest/dist/manifest/src/seed/scripts/seed.js"
+  }
+}

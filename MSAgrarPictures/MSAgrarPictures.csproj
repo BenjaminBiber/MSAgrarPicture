@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Folder Include="wwwroot\css\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\MSLib\MSLib.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
+    </ItemGroup>
+
+    <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(MSBuildProjectDirectory)/nodepack/node_modules') ">
+        <Exec Command="node --version" ContinueOnError="true">
+            <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
+        </Exec>
+        <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js is required to build and run this project. To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE." />
+        <Message Importance="high" Text="Restoring dependencies using 'npm'. This may take several minutes..." />
+        <Exec WorkingDirectory="$(MSBuildProjectDirectory)" Command="npm install" />
+    </Target>
+
+    <Target Name="RunLess" BeforeTargets="Build">
+        <Exec Command="npm run less" WorkingDirectory="$(MSBuildProjectDirectory)" />
+        <Exec Command="npm run less-Gallery" WorkingDirectory="$(MSBuildProjectDirectory)" />
+        <Exec Command="npm run less-Home" WorkingDirectory="$(MSBuildProjectDirectory)" />
+        <Exec Command="npm run less-About" WorkingDirectory="$(MSBuildProjectDirectory)" />
+        <Exec Command="npm run less-Header" WorkingDirectory="$(MSBuildProjectDirectory)" />
+        <Exec Command="npm run less-Footer" WorkingDirectory="$(MSBuildProjectDirectory)" />
+    </Target>
+</Project>

@@ -1,0 +1,133 @@
+@import "vars.less";
+
+:host {
+  display: flex;
+}
+
+.about-wrapper{
+  min-height: calc(100dvh - 10em);
+  background: lighten(@color4, 5%);
+  flex-direction: column;
+  width: 100vw;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  .header {
+    position: relative;
+    z-index: 998;
+    font-size: 2.5rem;
+    margin-bottom: 1em;
+    margin-top: 0.5em;
+  }
+  .pic {
+    height: 60dvh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 35%;
+    .polaroid-comp {
+      width: 75%;
+    }
+  }
+
+  .content-wrapper {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    .polaroid-comp {
+      margin-bottom: 1.5em;
+    }
+    .Text {
+      position: relative;
+      width: 35%;
+      p {
+        font-size: 2em;
+        margin-top: 0;
+        font-weight: 300;
+      }
+      h1 {
+        margin: 0;
+        margin-bottom: 0.25em;
+        font-size: 2.5em;
+      }
+    }
+  }
+}
+
+@media (max-width: 1200px)
+{
+  .about-wrapper{
+    .content-wrapper {
+      .Text {
+        width: 35%;
+        p {
+          font-size: 1.5em;
+        }
+        h1 {
+          font-size: 2em;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px)
+{
+  .about-wrapper{
+    .header {
+      margin-bottom: 1.35em;
+      margin-top: 0.35em;
+    }
+    .content-wrapper {
+      flex-direction: column;
+      .pic {
+        height: 35dvh;
+        margin-bottom: 1em;
+      }
+      .Text {
+        display: flex;
+        gap: 2em;
+        width: 90%;
+        text-align: center;
+        margin-top: 1.2em;
+        p {
+          font-size: 1.5em;
+        }
+        h1 {
+          font-size: 2em;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 480px)
+{
+  .about-wrapper{
+    .header {
+      margin-bottom: 0.75em;
+      margin-top: 0.25em;
+    }
+    .content-wrapper {
+      flex-direction: column;
+      .pic {
+        height: 25dvh;
+        margin-bottom: 1em;
+      }
+      .Text {
+        display: flex;
+        gap: 1em;
+        width: 90%;
+        flex-direction: column;
+        text-align: center;
+        p {
+          font-size: 1.5em;
+          margin-bottom: 0;
+        }
+        h1 {
+          font-size: 2em;
+        }
+      }
+    }
+  }
+}
